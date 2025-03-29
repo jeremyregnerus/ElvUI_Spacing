@@ -1,0 +1,7 @@
+## Interface: 11302
+## Title: ElvUI Custom Spacing
+## Notes: Adjusts spacing between specific ElvUI action bar buttons.
+## Author: Tielc
+## Version: 1.0
+## Dependencies: ElvUI
+ElvUI_Spacing.lua
