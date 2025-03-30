@@ -1,6 +1,60 @@
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD") -- This ensures the UI is fully loaded
 
+local function CreatePanels()
+	local panelAnchors = {
+		{"ElvUI_Bar2Button9", "ElvUI_Bar4Button12"},
+		{"ElvUI_Bar1Button1", "ElvUI_Bar13Button3"},
+		{"ElvUI_Bar1Button8", "ElvUI_Bar13Button6"},
+		{"ElvUI_Bar2Button1", "ElvUI_Bar13Button9"},
+		{"ElvUI_Bar2Button4", "ElvUI_Bar13Button12"}
+	}
+	
+	local panels = {}
+	
+	local function CreatePanel(index, topLeftFrame, bottomRightFrame)
+        local anchorTopLeft = _G[topLeftFrame]
+        local anchorBottomRight = _G[bottomRightFrame]
+
+        if not anchorTopLeft or not anchorBottomRight then
+            print("|cffff0000[CustomSpacing]: Missing anchor frame for Panel " .. index .. "!|r")
+            return
+        end
+
+        local panel = CreateFrame("Frame", "CustomPanel" .. index, UIParent, "BackdropTemplate")
+        panel:SetFrameStrata("BACKGROUND")
+        panel:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8x8",  -- Solid texture
+            edgeFile = nil,
+            tile = false, tileSize = 0, edgeSize = 0,
+            insets = { left = 0, right = 0, top = 0, bottom = 0 }
+        })
+        panel:SetBackdropColor(0, 0, 0, 1)  -- Solid black, no transparency
+
+        -- Anchor panel
+        panel:ClearAllPoints()
+        panel:SetPoint("TOPLEFT", anchorTopLeft, "TOPLEFT", -2, 2)  -- Offset (-1,1)
+        panel:SetPoint("BOTTOMRIGHT", anchorBottomRight, "BOTTOMRIGHT", 2, -2)  -- Offset (1,-1)
+
+        panels[index] = panel
+    end
+
+    -- Create and anchor all panels
+    for i, anchors in ipairs(panelAnchors) do
+        CreatePanel(i, anchors[1], anchors[2])
+    end
+end
+
+local function CreateBackdrops()
+	local backdrops = {
+		{},
+		{},
+		{},
+		{},
+		{}
+	}
+end
+
 local function AdjustSpacing()
     if not ElvUI then
         print("|cffff0000ElvUI not found!|r")
@@ -14,8 +68,6 @@ local function AdjustSpacing()
         print("|cffff0000ActionBars module not found!|r")
         return
     end
-
-    print("|cff00ff00Adjusting button spacing...|r")
 
     local function GetButtonSizeSetting(barIndex)
 		return E.db and E.db.actionbar["bar" .. barIndex] and E.db.actionbar["bar" .. barIndex].buttonWidth or 36
@@ -135,6 +187,54 @@ local function AdjustSpacing()
 	local buttonF5 = _G["ElvUI_Bar4Button9"]
 	buttonF5:ClearAllPoints()
 	buttonF5:SetPoint("BOTTOMLEFT", button6, "TOPLEFT", (width / 2) + padding, padding)
+	
+	-- anchor bar 13 to the number row
+	local button131 = _G["ElvUI_Bar13Button1"]
+	button131:ClearAllPoints()
+	button131:SetPoint("LEFT", _G["ElvUI_Bar3Button6"], "RIGHT", (width + padding) * 2, 0)
+	
+	-- set the backdrop anchors
+	
+	
+	
+	local bgNumbers = _G["ElvUI_Bar1"].backdrop
+	
+	bgNumbers:ClearAllPoints()
+	bgNumbers:SetPoint("TOPLEFT", _G["ElvUI_Bar1Button1"], "TOPLEFT", -padding, padding)
+	bgNumbers:SetPoint("BOTTOMRIGHT", _G["ElvUI_Bar13Button3"], "BOTTOMRIGHT", padding, -padding)
+	bgNumbers:SetBackdropBorderColor(0, 0, 0, 0)
+	
+	local bgQ = _G["ElvUI_Bar2"].backdrop
+	
+	bgQ:ClearAllPoints()
+	bgQ:SetPoint("TOPLEFT", _G["ElvUI_Bar1Button8"], "TOPLEFT", -padding, padding)
+	bgQ:SetPoint("BOTTOMRIGHT", _G["ElvUI_Bar13Button6"], "BOTTOMRIGHT", padding, -padding)
+	bgQ:SetBackdropBorderColor(0, 0, 0, 0)
+	
+	local bgA = _G["ElvUI_Bar3"].backdrop
+	
+	bgA:ClearAllPoints()
+	bgA:SetPoint("TOPLEFT", _G["ElvUI_Bar2Button1"], "TOPLEFT", -padding, padding)
+	bgA:SetPoint("BOTTOMRIGHT", _G["ElvUI_Bar13Button9"], "BOTTOMRIGHT", padding, -padding)
+	bgA:SetBackdropBorderColor(0, 0, 0, 0)
+	
+	local bgZ = _G["ElvUI_Bar4"].backdrop
+	
+	bgZ:ClearAllPoints()
+	bgZ:SetPoint("TOPLEFT", _G["ElvUI_Bar2Button4"], "TOPLEFT", -padding, padding)
+	bgZ:SetPoint("BOTTOMRIGHT", _G["ElvUI_Bar13Button12"], "BOTTOMRIGHT", padding, -padding)
+	bgZ:SetBackdropBorderColor(0, 0, 0, 0)
+	
+	local bgF = _G["ElvUI_Bar13"].backdrop
+	
+	--bgF:SetParent(_G["ElvUI_Bar2"])
+	--bgF:Show()
+	bgF:ClearAllPoints()
+	bgF:SetPoint("TOPLEFT", _G["ElvUI_Bar2Button9"], "TOPLEFT", -padding, padding)
+	bgF:SetPoint("BOTTOMRIGHT", _G["ElvUI_Bar4Button12"], "BOTTOMRIGHT", padding, -padding)
+	bgF:SetBackdropBorderColor(0, 0, 0, 0)
+	
+	CreatePanels()
 end
 
 -- Hook into ElvUI's settings update system
