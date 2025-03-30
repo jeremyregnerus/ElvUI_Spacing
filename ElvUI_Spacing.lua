@@ -50,10 +50,10 @@ local function AdjustSpacing()
 	
 	-- create the Q row of keys
 	local buttonQ = _G["ElvUI_Bar1Button8"]
-	local buttonQAnchor = _G["ElvUI_Bar1Button2"]
+	local button1 = _G["ElvUI_Bar1Button2"]
 	
 	buttonQ:ClearAllPoints()
-	buttonQ:SetPoint("TOPLEFT", buttonQAnchor, "BOTTOMLEFT", (width / 2) + padding, -padding)
+	buttonQ:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
 	-- add a 1 button space between W & R
 	local buttonW = _G["ElvUI_Bar1Button9"]
@@ -121,10 +121,20 @@ local function AdjustSpacing()
 	
 	-- Adjust the location of the stance bar
 	local stance1 = _G["ElvUI_StanceBarButton1"]
-	local button1 = _G["ElvUI_Bar1Button2"]
 	
 	stance1:ClearAllPoints()
 	stance1:SetPoint("BOTTOMLEFT", button1, "TOPLEFT", (width / 2) + padding, padding)
+	
+	-- add the F1 - F4 keys using the remaining 4 keys from Action Bar 2
+	local buttonF1 = _G["ElvUI_Bar2Button9"]
+	
+	buttonF1:ClearAllPoints()
+	buttonF1:SetPoint("BOTTOMLEFT", button1, "TOPLEFT", (width / 2) + padding, padding)
+	
+	-- add the F5 - F8 buttons using the remaining 4 keys from Action Bar 4
+	local buttonF5 = _G["ElvUI_Bar4Button9"]
+	buttonF5:ClearAllPoints()
+	buttonF5:SetPoint("BOTTOMLEFT", button6, "TOPLEFT", (width / 2) + padding, padding)
 end
 
 -- Hook into ElvUI's settings update system
