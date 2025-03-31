@@ -83,6 +83,11 @@ local function CreateBackdrops(padding)
 	end
 end
 
+local function AnchorButton(buttonToMove, anchorFrom, buttonAnchor, anchorTo, horizontalSpacing, verticalSpacing)
+	buttonToMove:ClearAllPoints()
+	buttonToMove:SetPoint(anchorFrom, buttonAnchor, anchorTo, horizontalSpacing, verticalSpacing)
+end
+
 local function AdjustSpacing()
     if not ElvUI then
         print("|cffff0000ElvUI not found!|r")
@@ -128,98 +133,50 @@ local function AdjustSpacing()
 	local width = GetButtonSize(1)
 	local padding = GetButtonPadding(1)
 	
-	-- create the Q row of keys
-	local buttonQ = _G["ElvUI_Bar1Button8"]
-	local button1 = _G["ElvUI_Bar1Button2"]
-	
-	buttonQ:ClearAllPoints()
-	buttonQ:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", (width / 2) + padding, -padding)
+	-- create the Q row by anchoring Q to 1
+	AnchorButton(_G["ElvUI_Bar1Button8"], "TOPLEFT", _G["ElvUI_Bar1Button2"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
 	-- add a 1 button space between W & R
-	local buttonW = _G["ElvUI_Bar1Button9"]
-	local buttonR = _G["ElvUI_Bar1Button10"]
+	AnchorButton(_G["ElvUI_Bar1Button10"], "LEFT", _G["ElvUI_Bar1Button9"], "RIGHT", width + padding, 0)
 	
-	buttonR:ClearAllPoints()
-	buttonR:SetPoint("LEFT", buttonW, "RIGHT", width + padding, 0)
-	
-	-- lock Action Bar 2 to Action Bar 1 creating the A row of keys
-	local buttonA = _G["ElvUI_Bar2Button1"]
-
-	buttonA:ClearAllPoints()
-	buttonA:SetPoint("TOPLEFT", buttonQ, "BOTTOMLEFT", (width / 2) + padding, -padding)
+	-- create the A row by anchoring A to Q
+	AnchorButton(_G["ElvUI_Bar2Button1"], "TOPLEFT", _G["ElvUI_Bar1Button8"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 
 	-- add a 3 button space between A & G
-	local buttonG = _G["ElvUI_Bar2Button2"]
-
-	buttonG:ClearAllPoints()
-	buttonG:SetPoint("LEFT", buttonA, "RIGHT", (width + padding) * 3, 0)
+	AnchorButton(_G["ElvUI_Bar2Button2"], "LEFT", _G["ElvUI_Bar2Button1"], "RIGHT", (width + padding) * 3, 0)
 	
-	-- create the Z row of Keys
-	local buttonZ = _G["ElvUI_Bar2Button4"]
+	-- create the Z row by anchoring Z to A
+	AnchorButton(_G["ElvUI_Bar2Button4"], "TOPLEFT", _G["ElvUI_Bar2Button1"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
-	buttonZ:ClearAllPoints()
-	buttonZ:SetPoint("TOPLEFT", buttonA, "BOTTOMLEFT", (width / 2) + padding, -padding)
-	
-	-- create the second keyboard layout (shift modifiers) starting with Action Bar 3 for the Numeric keys
-	local button6 = _G["ElvUI_Bar1Button7"]
-	local buttonS1 = _G["ElvUI_Bar3Button1"]
-
-	buttonS1:ClearAllPoints()
-	buttonS1:SetPoint("LEFT", button6, "RIGHT", (width + padding) * 1, 0)
+	-- create the second keyboard layout (shift modifiers) by anchoring S1 to 6
+	AnchorButton(_G["ElvUI_Bar3Button1"], "LEFT", _G["ElvUI_Bar1Button7"], "RIGHT", (width + padding) * 1, 0)
 		
-	-- create the Q row of keys for the second keyboard layout
-	local buttonSQ = _G["ElvUI_Bar3Button7"]
+	-- create the SQ row by anchoring SQ to S1
+	AnchorButton(_G["ElvUI_Bar3Button7"], "TOPLEFT", _G["ElvUI_Bar3Button1"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
-	buttonSQ:ClearAllPoints()
-	buttonSQ:SetPoint("TOPLEFT", buttonS1, "BOTTOMLEFT", (width / 2) + padding, -padding)
+	-- add a 1 button space between SW & SR
+	AnchorButton(_G["ElvUI_Bar3Button9"], "LEFT", _G["ElvUI_Bar3Button8"], "RIGHT", width + padding, 0)
 	
-	-- add a 1 button gap between W & R on the second keyboard
-	local buttonSW = _G["ElvUI_Bar3Button8"]
-	local buttonSR = _G["ElvUI_Bar3Button9"]
+    -- create the SA row by anchoring SA to SQ
+	AnchorButton(_G["ElvUI_Bar4Button1"], "TOPLEFT", _G["ElvUI_Bar3Button7"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 
-	buttonSR:ClearAllPoints()
-	buttonSR:SetPoint("LEFT", buttonSW, "RIGHT", width + padding, 0)
-	
-    -- Anchor Action Bar 4 to Action Bar 3
-	local buttonSA = _G["ElvUI_Bar4Button1"]
-	local buttonSQ = _G["ElvUI_Bar3Button7"]
-	
-	buttonSA:ClearAllPoints()
-	buttonSA:SetPoint("TOPLEFT", buttonSQ, "BOTTOMLEFT", (width / 2) + padding, -padding)
-
-	-- add a 3 button space between A & G on the second keyboard layout
-	local buttonSG = _G["ElvUI_Bar4Button2"]
-
-	buttonSG:ClearAllPoints()
-	buttonSG:SetPoint("LEFT", buttonSA, "RIGHT", (width + padding) * 3, 0)
+	-- add a 3 button space between SA & SG
+	AnchorButton(_G["ElvUI_Bar4Button2"], "LEFT", _G["ElvUI_Bar4Button1"], "RIGHT", (width + padding) * 3, 0)
 		
-	-- create the Z button row on the second keyboard layout
-	local buttonSZ = _G["ElvUI_Bar4Button4"]
-	
-	buttonSZ:ClearAllPoints()
-	buttonSZ:SetPoint("TOPLEFT", buttonSA, "BOTTOMLEFT", (width / 2) + padding, -padding)
+	-- create the SZ row by anchoring SZ to SA
+	AnchorButton(_G["ElvUI_Bar4Button4"], "TOPLEFT", _G["ElvUI_Bar4Button1"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
 	-- Adjust the location of the stance bar
-	local stance1 = _G["ElvUI_StanceBarButton1"]
-	
-	stance1:ClearAllPoints()
-	stance1:SetPoint("BOTTOMLEFT", button1, "TOPLEFT", (width / 2) + padding, padding)
+	AnchorButton(_G["ElvUI_StanceBarButton1"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
 	
 	-- add the F1 - F4 keys using the remaining 4 keys from Action Bar 2
-	local buttonF1 = _G["ElvUI_Bar2Button9"]
-	
-	buttonF1:ClearAllPoints()
-	buttonF1:SetPoint("BOTTOMLEFT", button1, "TOPLEFT", (width / 2) + padding, padding)
+	AnchorButton(_G["ElvUI_Bar2Button9"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
 	
 	-- add the F5 - F8 buttons using the remaining 4 keys from Action Bar 4
-	local buttonF5 = _G["ElvUI_Bar4Button9"]
-	buttonF5:ClearAllPoints()
-	buttonF5:SetPoint("BOTTOMLEFT", button6, "TOPLEFT", (width / 2) + padding, padding)
+	AnchorButton(_G["ElvUI_Bar4Button9"], "BOTTOMLEFT", _G["ElvUI_Bar1Button7"], "TOPLEFT", (width / 2) + padding, padding)
 	
 	-- anchor bar 13 to the number row
-	local button51 = _G["ElvUI_Bar5Button1"]
-	button51:ClearAllPoints()
-	button51:SetPoint("LEFT", _G["ElvUI_Bar3Button6"], "RIGHT", (width + padding) * 2, 0)
+	AnchorButton(_G["ElvUI_Bar5Button1"], "LEFT", _G["ElvUI_Bar3Button6"], "RIGHT", (width + padding) * 2, 0)
 	
 	CreateBackdrops(padding)
 end
