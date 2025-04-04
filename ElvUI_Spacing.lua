@@ -167,7 +167,7 @@ local function AdjustSpacing()
 	AnchorButton(_G["ElvUI_Bar4Button4"], "TOPLEFT", _G["ElvUI_Bar4Button1"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
 	-- Adjust the location of the stance bar
-	AnchorButton(_G["ElvUI_StanceBarButton1"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
+	-- AnchorButton(_G["ElvUI_StanceBarButton1"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
 	
 	-- add the F1 - F4 keys using the remaining 4 keys from Action Bar 2
 	AnchorButton(_G["ElvUI_Bar2Button9"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
