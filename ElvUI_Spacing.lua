@@ -1,84 +1,58 @@
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD") -- This ensures the UI is fully loaded
 
-local function CreatePanels()
-	local panelAnchors = {
-		{"ElvUI_Bar2Button9", "ElvUI_Bar4Button12"},
-		{"ElvUI_Bar1Button1", "ElvUI_Bar13Button3"},
-		{"ElvUI_Bar1Button8", "ElvUI_Bar13Button6"},
-		{"ElvUI_Bar2Button1", "ElvUI_Bar13Button9"},
-		{"ElvUI_Bar2Button4", "ElvUI_Bar13Button12"}
-	}
-	
-	local panels = {}
-	
-	local function CreatePanel(index, topLeftFrame, bottomRightFrame)
-        local anchorTopLeft = _G[topLeftFrame]
-        local anchorBottomRight = _G[bottomRightFrame]
-
-        if not anchorTopLeft or not anchorBottomRight then
-            print("|cffff0000[CustomSpacing]: Missing anchor frame for Panel " .. index .. "!|r")
-            return
-        end
-
-        local panel = CreateFrame("Frame", "CustomPanel" .. index, UIParent, "BackdropTemplate")
-        panel:SetFrameStrata("BACKGROUND")
-        panel:SetBackdrop({
-            bgFile = "Interface\\Buttons\\WHITE8x8",  -- Solid texture
-            edgeFile = nil,
-            tile = false, tileSize = 0, edgeSize = 0,
-            insets = { left = 0, right = 0, top = 0, bottom = 0 }
-        })
-        panel:SetBackdropColor(0, 0, 0, 1)  -- Solid black, no transparency
-
-        -- Anchor panel
-        panel:ClearAllPoints()
-        panel:SetPoint("TOPLEFT", anchorTopLeft, "TOPLEFT", -2, 2)  -- Offset (-1,1)
-        panel:SetPoint("BOTTOMRIGHT", anchorBottomRight, "BOTTOMRIGHT", 2, -2)  -- Offset (1,-1)
-
-        panels[index] = panel
-    end
-
-    -- Create and anchor all panels
-    for i, anchors in ipairs(panelAnchors) do
-        CreatePanel(i, anchors[1], anchors[2])
-    end
-end
-
 local function CreateBackdrops(padding)
-	local backdrops = {
-		{"ElvUI_Bar1", "ElvUI_Bar1Button1", "ElvUI_Bar5Button3"},
-		{"ElvUI_Bar2", "ElvUI_Bar1Button8", "ElvUI_Bar5Button6"},
-		{"ElvUI_Bar3", "ElvUI_Bar2Button1", "ElvUI_Bar5Button9"},
-		{"ElvUI_Bar4", "ElvUI_Bar2Button4", "ElvUI_Bar5Button12"},
-		{"ElvUI_Bar5", "ElvUI_Bar2Button9", "ElvUI_Bar4Button12"}
+	local backdropAnchors = {
+		{"ElvUI_Bar2Button9", "ElvUI_Bar2Button12"},
+		{"ElvUI_Bar1Button1", "ElvUI_Bar1Button7"},
+		{"ElvUI_Bar1Button8", "ElvUI_Bar1Button12"},
+		{"ElvUI_Bar2Button1", "ElvUI_Bar2Button3"},
+		{"ElvUI_Bar2Button4", "ElvUI_Bar2Button8"},
+		{"ElvUI_Bar4Button9", "ElvUI_Bar4Button12"},
+		{"ElvUI_Bar3Button1", "ElvUI_Bar3Button6"},
+		{"ElvUI_Bar3Button7", "ElvUI_Bar3Button11"},
+		{"ElvUI_Bar4Button1", "ElvUI_Bar4Button3"},
+		{"ElvUI_Bar4Button4", "ElvUI_Bar4Button8"}
+		--{"ElvUI_Bar5Button1", "ElvUI_Bar5Button12"}
 	}
 	
 	local function CreateBackdrop(anchor, padding)
-		local backdrop = _G[anchor[1]].backdrop
 	
-		backdrop:ClearAllPoints()
-		backdrop:SetPoint("TOPLEFT", _G[anchor[2]], "TOPLEFT", -padding, padding)
-		backdrop:SetPoint("BOTTOMRIGHT", _G[anchor[3]], "BOTTOMRIGHT", padding, -padding)
-		backdrop:SetBackdropBorderColor(0, 0, 0, 0)
-		
-        local panel = CreateFrame("Frame", "Backdrop" .. anchor[1], UIParent, "BackdropTemplate")
-        panel:SetFrameStrata("BACKGROUND")
-        panel:SetBackdrop({
+		padding = padding / 2
+	
+		local panel = CreateFrame("Frame", "Backdrop" .. anchor[1] .. anchor[2], UIParent, "BackdropTemplate")
+		panel:SetFrameStrata("BACKGROUND")
+		panel:SetBackdrop({
             bgFile = "Interface\\Buttons\\WHITE8x8",
             edgeFile = nil,
             tile = false, tileSize = 0, edgeSize = 0,
             insets = { left = 0, right = 0, top = 0, bottom = 0 }
         })
-        panel:SetBackdropColor(0, 0, 0, 1)
+		panel:SetBackdropColor(.10196, .10196, .10196, 1)
+		panel:SetBackdropBorderColor(0, 0, 0, 0)
+		
+		panel:ClearAllPoints()
+		panel:SetPoint("TOPLEFT", _G[anchor[1]], "TOPLEFT", -padding, padding)
+		panel:SetPoint("BOTTOMRIGHT", _G[anchor[2]], "BOTTOMRIGHT", padding, -padding)
+		panel:SetFrameLevel(100)
+	
+		local edge = CreateFrame("Frame", "Edge" .. anchor[1] .. anchor[2], UIParent, "BackdropTemplate")
+		edge:SetFrameStrata("BACKGROUND")
+        edge:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8x8",
+            edgeFile = nil,
+            tile = false, tileSize = 0, edgeSize = 0,
+            insets = { left = 0, right = 0, top = 0, bottom = 0 }
+        })
+        edge:SetBackdropColor(0, 0, 0, 1)
 
-        -- Anchor panel
-        panel:ClearAllPoints()
-        panel:SetPoint("TOPLEFT", backdrop, "TOPLEFT", -.5, .5)  -- Offset (-1,1)
-        panel:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", .5, -.5)  -- Offset (1,-1)
+        edge:ClearAllPoints()
+        edge:SetPoint("TOPLEFT", panel, "TOPLEFT", -.5, .5)
+        edge:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", .5, -.5)
+		edge:SetFrameLevel(0)
 	end
 	
-	for i, anchor in pairs(backdrops) do
+	for i, anchor in pairs(backdropAnchors) do
 		CreateBackdrop(anchor, padding)
 	end
 end
@@ -102,12 +76,12 @@ local function AdjustSpacing()
         return
     end
 
-    local function GetButtonSizeSetting(barIndex)
-		return E.db and E.db.actionbar["bar" .. barIndex] and E.db.actionbar["bar" .. barIndex].buttonWidth or 36
+    local function GetButtonSizeSetting()
+		return E.db and E.db.actionbar["bar1"] and E.db.actionbar["bar1"].buttonWidth or 36
     end
 
-    local function GetButtonPaddingSetting(barIndex)
-        return E.db and E.db.actionbar["bar" .. barIndex] and E.db.actionbar["bar" .. barIndex].buttonSpacing or 0
+    local function GetButtonPaddingSetting()
+        return E.db and E.db.actionbar["bar1"] and E.db.actionbar["bar1"].buttonSpacing or 0
     end
 	
 	local function GetHorizontalDistance(button1, button2)
@@ -119,19 +93,22 @@ local function AdjustSpacing()
 		return math.abs(left2 - left1)
 	end
 	
-	local function GetButtonSize(barIndex)
-		return _G["ElvUI_Bar" .. barIndex .. "Button1"]:GetWidth()
+	local function GetButtonSize()
+		return _G["ElvUI_Bar1Button1"]:GetWidth()
 	end
 	
-	local function GetButtonPadding(barIndex)
-		local b1 = _G["ElvUI_Bar" .. barIndex .. "Button1"]
-		local b2 = _G["ElvUI_Bar" .. barIndex .. "Button2"]
+	local function GetButtonPadding()
+		local b1 = _G["ElvUI_Bar1Button1"]
+		local b2 = _G["ElvUI_Bar1Button2"]
 			
 		return GetHorizontalDistance(b1, b2) - GetButtonSize(1)
 	end
 
-	local width = GetButtonSize(1)
-	local padding = GetButtonPadding(1)
+	local width = GetButtonSize()
+	local padding = GetButtonPadding()
+	
+	--print("|cffff0000Width: " .. GetButtonSize() .. " | Setting: " .. GetButtonSizeSetting() .. "|r")
+	--print("|cffff0000Padding: " .. GetButtonPadding() .. " | Setting: " .. GetButtonPaddingSetting() .. "|r")
 	
 	-- create the Q row by anchoring Q to 1
 	AnchorButton(_G["ElvUI_Bar1Button8"], "TOPLEFT", _G["ElvUI_Bar1Button2"], "BOTTOMLEFT", (width / 2) + padding, -padding)
@@ -167,7 +144,7 @@ local function AdjustSpacing()
 	AnchorButton(_G["ElvUI_Bar4Button4"], "TOPLEFT", _G["ElvUI_Bar4Button1"], "BOTTOMLEFT", (width / 2) + padding, -padding)
 	
 	-- Adjust the location of the stance bar
-	-- AnchorButton(_G["ElvUI_StanceBarButton1"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
+	--AnchorButton(_G["ElvUI_StanceBarButton1"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
 	
 	-- add the F1 - F4 keys using the remaining 4 keys from Action Bar 2
 	AnchorButton(_G["ElvUI_Bar2Button9"], "BOTTOMLEFT", _G["ElvUI_Bar1Button2"], "TOPLEFT", (width / 2) + padding, padding)
